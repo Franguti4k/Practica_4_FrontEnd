@@ -25,34 +25,48 @@ export const handler: Handlers = {
     }
   },
   
-  async POST(req, ctx) {
-    const form = await req.formData();
-    const author = form.get('author')?.toString() || '';
-    const content = form.get('content')?.toString() || '';
-    
-    if (!author || !content) {
-      return new Response('Faltan campos requeridos', { status: 400 });
-    }
-    
+ async POST(req, ctx) {
+  const form = await req.formData();
+
+  // Si el formulario contiene el campo "delete", es una solicitud para eliminar
+  if (form.get("delete") === "true") {
     try {
-      await axios.patch(
-        `${API_BASE_URL}/api/posts/${ctx.params.id}/comments`,
-        { author, content },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      
-      // Redirigir a la misma página para ver el nuevo comentario
+      await axios.delete(`${API_BASE_URL}/api/posts/${ctx.params.id}`);
+
+      // Redirige al inicio tras borrar el post
       const headers = new Headers();
-      headers.set('location', `/post/${ctx.params.id}`);
-      return new Response(null, {
-        status: 303, // See Other
-        headers,
-      });
+      headers.set("Location", "/");
+      return new Response(null, { status: 303, headers });
     } catch (error) {
-      console.error('Error al publicar comentario:', error);
-      return new Response('Error al publicar el comentario', { status: 500 });
+      console.error("Error al eliminar el post:", error);
+      return new Response("Error al eliminar el post", { status: 500 });
     }
-  },
+  }
+
+  // Si no es para borrar, asumimos que es para crear un comentario
+  const author = form.get("author")?.toString() || "";
+  const content = form.get("content")?.toString() || "";
+
+  if (!author || !content) {
+    return new Response("Faltan campos requeridos", { status: 400 });
+  }
+
+  try {
+    await axios.post( //cambio de patch a post
+      `${API_BASE_URL}/api/posts/${ctx.params.id}/comments`,
+      { author, content },
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    const headers = new Headers();
+    headers.set("Location", `/post/${ctx.params.id}`);
+    return new Response(null, { status: 303 });
+  } catch (error) {
+    console.error("Error al publicar comentario:", error);
+    return new Response("Error al publicar el comentario", { status: 500 });
+  }
+}
+
 };
 
 interface PostProps {
@@ -116,8 +130,8 @@ export default function PostDetail({ data }: PostProps) {
     <div className="post-detail">
       {/* Portada del post */}
       <PostCover
-        src={post.portada}
-        alt={`Imagen de portada para: ${post.titulo}`}
+        src={post.cover}
+        alt={`Imagen de portada para: ${post.title}`}
         width={1200}
         height={400}
       />
@@ -125,17 +139,17 @@ export default function PostDetail({ data }: PostProps) {
       <div className="post-container">
         {/* Cabecera del post */}
         <header className="post-header">
-          <h1 className="post-title">{post.titulo}</h1>
+          <h1 className="post-title">{post.title}</h1>
           <div className="post-meta">
-            <span className="post-author">Por {post.autor}</span>
-            <span className="post-date">{formatDate(post.created_at)}</span>
+            <span className="post-author">Por {post.author}</span>
+            <span className="post-date">{formatDate(post.createdAt)}</span>
           </div>
         </header>
 
         {/* Contenido del post */}
         <article className="post-content">
           <div className="post-text">
-            {post.contenido.split("\n").map((paragraph, index) => (
+            {post.content.split("\n").map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
           </div>
@@ -149,6 +163,13 @@ export default function PostDetail({ data }: PostProps) {
               initialLikes={post.likes}
               isLiked={false}
             />
+            <form method="POST">
+              <input type="hidden" name="delete" value="true" />
+              <button type="submit" className="delete-button">
+              🗑️ Eliminar
+               </button>
+            </form>
+
           </div>
 
           {/* Sección de comentarios (puedes implementarla más adelante) */}

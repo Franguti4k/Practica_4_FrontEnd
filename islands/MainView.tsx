@@ -13,10 +13,11 @@ export default function MainView({ isGrid, posts }: HomeProps) {
       <div className="view-toggle">
         <button
           type="button"
-          className={`toggle-button ${isGrid.value ? "active" : ""}`}
+          className={`toggle-button ${isGrid.value ? "active" : "hover"}`} //añado hover
           title={isGrid.value
             ? "Cambiar a vista de lista"
             : "Cambiar a vista de cuadrícula"}
+          onClick={() => isGrid.value = !isGrid.value} //Añado funcion onclick para que cambie la señal isGrid para cambiar entre cuadricula y lista
         >
           {isGrid.value ? "☰ Lista" : "⏹️ Cuadrícula"}
         </button>

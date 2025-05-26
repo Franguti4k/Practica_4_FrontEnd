@@ -28,37 +28,38 @@ export default function PostComponent({ post, isGrid = false }: PostProps) {
       <a href={`/post/${post._id}`} className="post-card">
         <div className="post-image-container">
           <img
-            src={post.portada}
-            alt={post.titulo}
+            src={post.cover}
+            alt={post.title}
             onError={handleImageError}
             className="post-image"
           />
         </div>
         <div className="post-content">
-          <h2 className="post-title">{post.titulo}</h2>
-          <p className="post-author">Por {post.autor}</p>
+          <h2 className="post-title">{post.title}</h2>
+          <p className="post-author">Por {post.author}</p>
           <div className="post-stats">
             <span className="post-likes">❤️ {post.likes} Me gusta</span>
             <span className="post-comments">
-              💬 {post.comentarios?.length || 0} Comentarios
+              💬 {post.comments?.length || 0} Comentarios
             </span>
           </div>
           <div className="post-divider"></div>
-          <p className="post-date">{formatDate(post.created_at)}</p>
+          <p className="post-date">{formatDate(post.createdAt)}</p>
         </div>
       </a>
     );
+    
   }
 
   // Vista de lista
   return (
     <a href={`/post/${post._id}`} className="post-list-item">
       <div className="post-list-content">
-        <h2 className="post-title">{post.titulo}</h2>
+        <h2 className="post-title">{post.title}</h2>
         <div className="post-list-meta">
-          <span className="post-author">Por {post.autor}</span>
+          <span className="post-author">Por {post.author}</span>
           <span className="post-likes">❤️ {post.likes}</span>
-          <span className="post-comments">💬 {post.comentarios?.length || 0}</span>
+          <span className="post-comments">💬 {post.comments?.length || 0}</span>
         </div>
       </div>
     </a>

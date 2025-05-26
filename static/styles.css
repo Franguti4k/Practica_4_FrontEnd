@@ -459,7 +459,7 @@ html {
   transition: all 0.2s ease-in-out;
 }
 
-.toggle-button:hover {
+.toggle-button.hover { /*cambio de : a .*/
   background-color: #e5e7eb;
   border-color: #9ca3af;
 }

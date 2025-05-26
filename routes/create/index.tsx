@@ -19,18 +19,22 @@ function isValidFormDataKey(key: string): key is keyof FormDataError {
 
 export const handler: Handlers = {
   async POST(_req, ctx) {
-    const form = await _req.formData();
-    const titulo = form.get("titulo");
-    const contenido = form.get("contenido");
-    const autor = form.get("autor");
-    const portada = form.get("portada");
+    const form = await _req.formData(); //cambiar las variables a ingles
+    const title = form.get("title");
+    const content = form.get("content");
+    const author = form.get("author");
+    const cover = form.get("cover");
+
 
     try {
-      await axios.patch(`${API_BASE_URL}/api/posts`, {
-        titulo,
-        contenido,
-        autor,
-        portada,
+      await axios.post(`${API_BASE_URL}/api/posts`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        title, //aqui tambien a ingles
+        content,
+        author,
+        cover,
       });
       const headers = new Headers();
       headers.set("location", "/");

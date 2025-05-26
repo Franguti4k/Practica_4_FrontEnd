@@ -10,12 +10,12 @@ export const handler: Handlers = {
     try {
       const { url } = _req;
       const searchParams = new URL(url).searchParams;
-      const query = searchParams.get("query");
+      const query = searchParams.get("search"); //cambio del nombre de query a search como en el input
       if (!query || query.trim() === "") {
         return ctx.render({ posts: [], query });
       }
       const { data } = await axios.get<ApiResponseSuccess<Post[]>>(
-        `${API_BASE_URL}/api/posts?query=${query}`,
+        `${API_BASE_URL}/api/posts?search=${query}`,
       );
       return ctx.render({ posts: data.data.posts });
     } catch (_) {
@@ -40,7 +40,7 @@ export default function Search({ data }: SearchProps) {
     <div className="search-container">
       <div className="search-header">
         <h1>Buscar publicaciones</h1>
-        <form action="/search" method="get" className="search-form">
+        <form action="/search" method="GET" className="search-form"> {/*GET en mayusculas*/ }
           <div className="search-input-container">
             <input
               type="text"
